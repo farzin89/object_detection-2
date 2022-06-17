@@ -1,7 +1,11 @@
 
 import cv2
 
-img = cv2.imread('farzin.jpg.jpg')
+#img = cv2.imread('farzin.jpg.jpg')
+cap = cv2.VideoCapture(1)
+cap.set(3,648)
+cap.set(4,488)
+
 
 classNames =[]
 classfile = 'coco.names'
@@ -18,16 +22,23 @@ net.setInputScale(1.0/127.5)
 net.setInputMean((127.5,127.5,127.5))
 net.setInputSwapRB(True)
 
-classIds,confs,bbox = net.detect(img,confThreshold = 0.5)
 
-print(classIds,bbox)
+while True :
 
-for classId,confidence , box in zip (classIds.flatten(),confs.flatten(),bbox):
-    cv2.rectangle(img,box,color =(0,255,0),thickness=3)
-    cv2.putText(img,classNames[classId-1],(box[0]+30,box[1]+50),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+    success,img = cap.read()
 
 
 
+    classIds,confs,bbox = net.detect(img,confThreshold = 0.5)
+    print(classIds,bbox)
 
-cv2.imshow("output",img)
-cv2.waitKey(0)
+    if len(classIds) != 0:
+        for classId,confidence , box in zip (classIds.flatten(),confs.flatten(),bbox):
+          cv2.rectangle(img,box,color =(0,255,0),thickness=3)
+          cv2.putText(img,classNames[classId-1],(box[0]+30,box[1]+50),cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+
+
+
+
+    cv2.imshow("output",img)
+    cv2.waitKey(1)
